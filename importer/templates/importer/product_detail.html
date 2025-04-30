@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ product.name }} Details</title>
+    <style>
+        .product-detail {
+            max-width: 600px;
+            margin: 50px auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .product-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 22px;
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        .product-description {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .order-form {
+            margin-top: 20px;
+        }
+
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .order-button {
+            padding: 8px 16px;
+            margin-left: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .order-button:hover {
+            background-color: #218838;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="product-detail">
+        {% if product %}
+            {% if product.image_urls %}
+                <img src="{{ product.image_urls }}" alt="{{ product.name }}" class="product-image">
+            {% endif %}
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-price">${{ product.price }}</div>
+            <div class="product-description">{{ product.description }}</div>
+
+            <!-- Order Form -->
+            <form method="post" class="order-form">
+                {% csrf_token %}
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" class="quantity-input" value="1" min="1" required>
+                
+                <!-- Hidden input to store the user's phone number -->
+                <input type="hidden" name="buyer_phone" value="{{ request.session.phone }}">
+                
+                <button type="submit" class="order-button">Order Now</button>
+            </form>
+        {% else %}
+            <p>Product not found.</p>
+        {% endif %}
+        
+        <a href="/product_list/" class="back-link">← Back to Products</a>
+    </div>
+
+</body>
+</html>
+

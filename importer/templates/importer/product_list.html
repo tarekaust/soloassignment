@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List</title>
+    <style>
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .product-card {
+            width: 200px;
+            height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+            padding: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-image {
+            max-height: 100px;
+            object-fit: contain;
+        }
+
+        .product-name {
+            font-weight: bold;
+        }
+
+        .product-price {
+            color: green;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 8px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-button {
+            padding: 8px 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .logout-button {
+            padding: 8px 16px;
+            background-color: #dc3545; /* Red */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Products</h1>
+
+    <!-- Search and Logout in one line -->
+    <div class="header-bar">
+        <form method="get" action="" class="search-form">
+            <input type="text" name="q" placeholder="Search products..." class="search-input" value="{{ request.GET.q }}">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+
+        <a href="{% url 'order_history' %}" class="logout-button" style="background-color: green;">My Orders</a>
+        <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+    </div>
+
+    {% if product %}
+        <div class="product-grid">
+            {% for item in product %}
+                <div class="product-card">
+                    <a href="/product/{{ item.id }}" style="text-decoration: none; color: inherit;">
+                        <div class="product-name">{{ item.name }}</div>
+                        <div class="product-price">${{ item.price }}</div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No product found.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for charts -->
+    <style>
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logout-button {
+            padding: 8px 16px;
+            background-color: #dc3545; /* Red */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h2 {
+            margin-top: 40px;
+        }
+
+        /* New styles for chart section */
+        .charts-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            justify-content: center;
+        }
+        .chart-box {
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <h1>Admin Dashboard</h1>
+        <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+    </div>
+
+    <p><strong>Total Users:</strong> {{ user_count }}</p>
+    <p><strong>Total Orders:</strong> {{ order_count }}</p>
+
+    <div class="charts-container">
+        <!-- Bar Chart -->
+        <div class="chart-box">
+            <h2>Orders Over Time</h2>
+            <canvas id="ordersChart" width="600" height="400"></canvas>
+        </div>
+
+        <!-- Pie Chart -->
+        <div class="chart-box">
+            <h2>Order Activity Among Users</h2>
+            <canvas id="userOrderChart" width="600" height="400"></canvas>
+        </div>
+    </div>
+
+    <h2>Registered Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Phone</th>
+                <th>User Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.user_name }}</td>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.user_type}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Orders Placed</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Buyer Phone Number</th>
+                <th>Order Date</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.buyer_phone }}</td>
+                <td>{{ order.order_date|date:"Y-m-d H:i" }}</td>
+                <td>{{ order.amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        // Bar Chart
+        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+        const ordersChart = new Chart(ordersCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for entry in orders_by_date %}"{{ entry.date }}",{% endfor %}],
+                datasets: [{
+                    label: '# of Orders',
+                    data: [{% for entry in orders_by_date %}{{ entry.count }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // Pie Chart
+        const userOrderCtx = document.getElementById('userOrderChart').getContext('2d');
+        const userOrderChart = new Chart(userOrderCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Users who Ordered', 'Users who did NOT Order'],
+                datasets: [{
+                    data: [{{ users_with_orders }}, {{ users_without_orders }}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)', // greenish
+                        'rgba(255, 99, 132, 0.7)'  // reddish
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+            }
+        });
+    </script>
+
+</body>
+</html>
