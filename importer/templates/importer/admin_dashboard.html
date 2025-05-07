@@ -4,40 +4,87 @@
     <title>Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for charts -->
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
         .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .logout-button {
-            padding: 8px 16px;
-            background-color: #dc3545; /* Red */
-            color: white;
-            border: none;
+        .header-bar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .logout-button, .create-admin-button {
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #007bff;
+            border: 1px solid #007bff;
             border-radius: 4px;
             text-decoration: none;
             cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-button {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .logout-button:hover, .create-admin-button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .logout-button:hover {
+            background-color: #dc3545;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        h2 {
-            margin-top: 40px;
         }
 
-        /* New styles for chart section */
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        h2 {
+            margin-top: 40px;
+            color: #333333;
+        }
+
         .charts-container {
             display: flex;
             flex-wrap: wrap;
@@ -45,79 +92,108 @@
             margin-top: 40px;
             margin-bottom: 40px;
             justify-content: center;
+            height: 700px; /* Ensure enough height for charts */
         }
+
         .chart-box {
-            width: 600px;
-            height: 400px;
+            width: 100%;
+            max-width: 600px; /* Ensure the chart box doesn't exceed this width */
+            height: auto; /* Allow the height to adjust dynamically */
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .chart-box canvas {
+            display: block; /* Prevent inline canvas behavior */
+            width: 100%; /* Ensure the canvas takes up the full width of the chart box */
+            height: auto; /* Maintain the aspect ratio */
+        }
+
+        .chart-box h2 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333333;
         }
     </style>
 </head>
 <body>
     <div class="header-bar">
         <h1>Admin Dashboard</h1>
-        <a href="{% url 'logout' %}" class="logout-button">Logout</a>
-    </div>
-
-    <p><strong>Total Users:</strong> {{ user_count }}</p>
-    <p><strong>Total Orders:</strong> {{ order_count }}</p>
-
-    <div class="charts-container">
-        <!-- Bar Chart -->
-        <div class="chart-box">
-            <h2>Orders Over Time</h2>
-            <canvas id="ordersChart" width="600" height="400"></canvas>
-        </div>
-
-        <!-- Pie Chart -->
-        <div class="chart-box">
-            <h2>Order Activity Among Users</h2>
-            <canvas id="userOrderChart" width="600" height="400"></canvas>
+        <div>
+            <a href="{% url 'register' %}" class="create-admin-button">Create Admin</a>
+            <a href="{% url 'logout' %}" class="logout-button">Logout</a>
         </div>
     </div>
 
-    <h2>Registered Users</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Phone</th>
-                <th>User Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.user_name }}</td>
-                <td>{{ user.phone }}</td>
-                <td>{{ user.user_type}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="content">
+        <p><strong>Total Users:</strong> {{ user_count }}</p>
+        <p><strong>Total Orders:</strong> {{ order_count }}</p>
 
-    <h2>Orders Placed</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Buyer Phone Number</th>
-                <th>Order Date</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for order in orders %}
-            <tr>
-                <td>{{ order.id }}</td>
-                <td>{{ order.buyer_phone }}</td>
-                <td>{{ order.order_date|date:"Y-m-d H:i" }}</td>
-                <td>{{ order.amount }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="charts-container">
+            <!-- Bar Chart -->
+            <div class="chart-box">
+                <h2>Orders Over Time</h2>
+                <canvas id="ordersChart" style="height: 600px;"></canvas>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="chart-box">
+                <h2>Order Activity Among Users</h2>
+                <canvas id="userOrderChart"></canvas>
+            </div>
+        </div>
+
+        <h2>Registered Users</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Phone</th>
+                        <th>User Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.user_name }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.user_type }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Orders Placed</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Buyer Phone Number</th>
+                        <th>Order Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.buyer_phone }}</td>
+                        <td>{{ order.order_date|date:"Y-m-d H:i" }}</td>
+                        <td>{{ order.amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script>
         // Bar Chart
@@ -135,13 +211,20 @@
                 }]
             },
             options: {
-                responsive: false,
-                maintainAspectRatio: false,
+                responsive: true,
+                maintainAspectRatio: true, // Ensure the chart maintains its aspect ratio
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Dates'
+                        }
+                    },
                     y: {
                         beginAtZero: true,
-                        ticks: {
-                            precision: 0
+                        title: {
+                            display: true,
+                            text: 'Number of Orders'
                         }
                     }
                 }
@@ -168,11 +251,15 @@
                 }]
             },
             options: {
-                responsive: false,
-                maintainAspectRatio: false,
+                responsive: true,
+                maintainAspectRatio: true, // Ensure the chart maintains its aspect ratio
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
             }
         });
     </script>
-
 </body>
 </html>

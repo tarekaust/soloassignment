@@ -12,17 +12,29 @@ def register(request):
         password = request.POST['password']  # not saved now
         user_type = request.POST.get('user_type', 'customer')
 
+        # Check if the user is trying to create an admin account
+        if user_type == 'admin' and email != 'superadmin@ecom.com':
+            # Ensure the current session user is logged in and is an admin
+            if not request.session.get('user_id') or request.session.get('login_type') != 'admin':
+                messages.error(request, "Only an admin can create another admin user.")
+                return redirect('login')
+
         try:
             user = User(
                 user_name=user_name,
                 full_name=full_name,
                 email=email,
                 phone=phone,
-                user_type=user_type
+                user_type=user_type,
+                password=password  # Save password if needed
             )
             user.save()
             messages.success(request, "Registration successful! Please login.")
-            return redirect('login')
+            if request.session.get('login_type') == 'admin':
+                # If the user is logged in as admin, redirect to admin dashboard
+                return redirect('admin_dashboard')
+            else:
+                return redirect('login')
         except Exception as e:
             messages.error(request, f"Registration failed: {e}")
 
@@ -37,13 +49,14 @@ def login_view(request):
         user_name = request.POST.get('user_name')
         phone = request.POST.get('phone')
         login_type = request.POST.get('login_type')
+        password = request.POST.get('password')  # not used now
 
         if not login_type:
             messages.error(request, "Please select a login type.")
             return render(request, 'importer/login.html')
 
         try:
-            user = User.objects.get(user_name=user_name, phone=phone)
+            user = User.objects.get(user_name=user_name, phone=phone, password=password)
             request.session['user_id'] = user.id
             request.session['user_name'] = user.user_name
             request.session['phone'] = user.phone
@@ -170,4 +183,6 @@ def order_history(request):
         except Product.DoesNotExist:
             order.amount = 0  # If product not found, set amount to 0
 
-    return render(request, 'importer/order_history.html', {'orders': orders})
+    total_amount = sum(order.amount for order in orders)
+
+    return render(request, 'importer/order_history.html', {'orders': orders, 'total_amount': total_amount})
