@@ -29,7 +29,7 @@ ALLOWED_HOSTS = ['*',
                  'soloassignment-3.onrender.com', 
                  'localhost', 
                  '127.0.0.1', 
-                 'https://skinelson-phrasevendor-8000.codio-box.uk'
+                 'https://skinelson-phrasevendor-8000.codio-box.uk']
 
 
 # Application definition
