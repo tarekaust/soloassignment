@@ -159,3 +159,28 @@ Data (data.csv) has been downloaded from
 ```bash
 https://github.com/octaprice/ecommerce-product-dataset/blob/main/README.md
 ```
+
+Upgrade SQLite3 to 3.31
+```bash
+# Install dependencies
+sudo apt update
+sudo apt install -y build-essential zlib1g-dev libncurses5-dev \
+  libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev \
+  wget libsqlite3-dev libbz2-dev
+
+# Download and extract Python source (e.g. Python 3.10.13)
+cd /tmp
+wget https://www.python.org/ftp/python/3.10.13/Python-3.10.13.tgz
+tar xzf Python-3.10.13.tgz
+cd Python-3.10.13
+
+# Configure with the right SQLite path
+./configure --enable-optimizations --with-ensurepip=install --prefix=/usr/local \
+  CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
+
+make -j4
+sudo make altinstall  # Use altinstall to avoid replacing system Python
+
+# Confirm it uses the right SQLite
+/usr/local/bin/python3.10 -c "import sqlite3; print(sqlite3.sqlite_version)"
+```
