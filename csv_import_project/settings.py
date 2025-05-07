@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-hpan2mg!*)(bw7wlo&d-su7vt1(yiz1yxz5mmoqsvhwxgugn62
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 
+                 'soloassignment-3.onrender.com', 
+                 'localhost', 
+                 '127.0.0.1', 
+                 'https://skinelson-phrasevendor-8000.codio-box.uk'
 
 
 # Application definition
@@ -124,5 +128,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = [
     'https://skinelson-phrasevendor-8000.codio-box.uk', 
-    'https://soloassignment-1.onrender.com'
+    'https://soloassignment-3.onrender.com'
 ]
