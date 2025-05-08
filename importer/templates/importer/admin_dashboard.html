@@ -142,6 +142,15 @@
             </div>
         </div>
 
+        <form method="get">
+            <label for="filter">Show:</label>
+            <select name="filter" id="filter" onchange="this.form.submit()">
+                <option value="all" {% if filter_value == 'all' %}selected{% endif %}>All Users</option>
+                <option value="active" {% if filter_value == 'active' %}selected{% endif %}>Active Customers</option>
+                <option value="inactive" {% if filter_value == 'inactive' %}selected{% endif %}>Inactive Customers</option>
+            </select>
+        </form>
+
         <h2>Registered Users</h2>
         <div class="table-container">
             <table>
